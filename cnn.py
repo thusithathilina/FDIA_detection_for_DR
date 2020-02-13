@@ -4,8 +4,8 @@ import pandas as pd
 from sklearn.metrics import precision_score, accuracy_score, recall_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
-train_windows = pd.read_csv('train-0.05-pecanstreet-PAKDD.csv', index_col=False)
-test_windows = pd.read_csv('test-0.05-pecanstreet-PAKDD.csv', index_col=False)
+train_windows = pd.read_csv('train-forecasts.csv', index_col=False)
+test_windows = pd.read_csv('test-forecasts.csv', index_col=False)
 
 train_data_without_attacks = train_windows.loc[train_windows['percentage'] == 1]
 

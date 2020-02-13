@@ -1,14 +1,9 @@
-import sys
 import itertools
-import collections
-import keras
-import math
 import pandas as pd
 import numpy as np
 import cmath
 
 from sys import argv
-from scipy import signal
 from scipy.fftpack import fft, ifft
 from sklearn.metrics import confusion_matrix, roc_curve
 from tslearn.clustering import TimeSeriesKMeans
@@ -23,8 +18,8 @@ if "-dtw" in argv:
     distanceMatrix = 'dtw'
 print('Distance matric = ' + distanceMatrix)
 
-train_windows = pd.read_csv('train-forecasts.csv', index_col=False)
-test_windows = pd.read_csv('test-forecasts.csv', index_col=False)
+train_windows = pd.read_csv('train-forecasts.csv', index_col=False).head(100)
+test_windows = pd.read_csv('test-forecasts.csv', index_col=False).head(50)
 
 train_data_without_attacks = train_windows.loc[train_windows['percentage'] == 1]
 train_data_without_attacks = train_data_without_attacks.drop(['result', 'percentage', 'slot', 'duration'], 1)
@@ -63,15 +58,13 @@ for i in range(len(test_data)):
 fpr, tpr, thresholds = roc_curve(df['result'], df['sr_value'])
 threshold = pd.Series(tpr-fpr, index=thresholds, name='tf').idxmax()
 df['prediction'] = df['sr_value'].map(lambda x: 1 if x > threshold else 0)
-df.to_csv('CSR-classification-with-k-' + str(kVal) + '.csv', index=False)
 
-
-precision = precision_score(df['result'], data['prediction'], average='binary')
-accuracy = accuracy_score(df['result'], data['prediction'])
-recall = recall_score(df['result'], data['prediction'], average='binary')
-f1 = 2 * (precision*recall) / (precision + recall)
-tn, fp, fn, tp = confusion_matrix(df['result'], data['prediction']).ravel()
-fpr = fp/(fp+tn)
+tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
+precision = tp / (tp + fp)
+accuracy = (tp + tn) / len(df)
+recall = tp / (tp + tn)
+f1 = 2 * (precision * recall) / (precision + recall)
+fpr = fp / (fp + tn)
 
 print('Accuracy = ' + str(accuracy))
 print('Precision = ' + str(precision))

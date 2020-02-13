@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from sklearn.metrics import precision_score, accuracy_score, recall_score, confusion_matrix
+from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
 train_windows = pd.read_csv('train-forecasts.csv', index_col=False)
@@ -42,10 +42,9 @@ for i in range(10):
     model.add(tf.keras.layers.Flatten())
     model.add(tf.keras.layers.Dense(128, activation=tf.keras.activations.relu))
     model.add(tf.keras.layers.Dense(2, activation=tf.keras.activations.softmax))
-        loss_function = 'sparse_categorical_crossentropy'
     model.summary()
 
-    model.compile(optimizer=tf.keras.optimizers.Adam(), loss=loss_function)
+    model.compile(optimizer=tf.keras.optimizers.Adam(), loss='sparse_categorical_crossentropy')
     early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
 
     train_data = np.expand_dims(train_data, axis=-1)
@@ -56,12 +55,12 @@ for i in range(10):
     y_pred = np.round(y_pred)
 
     y_pred = [x[1] for x in y_pred]
-    precision = precision_score(test_result, y_pred, average='binary')
-    accuracy = accuracy_score(test_result, y_pred)
-    recall = recall_score(test_result, y_pred, average='binary')
-    f1 = 2 * (precision*recall) / (precision + recall)
-    tn, fp, fn, tp = confusion_matrix(test_result, y_pred).ravel()
-    fpr = fp/(fp+tn)
+    tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
+    precision = tp / (tp + fp)
+    accuracy = (tp + tn) / len(df)
+    recall = tp / (tp + tn)
+    f1 = 2 * (precision * recall) / (precision + recall)
+    fpr = fp / (fp + tn)
     result.loc[i] = [accuracy, precision, recall, f1, fpr]
 
 print(result.mean())

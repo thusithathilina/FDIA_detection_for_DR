@@ -4,16 +4,15 @@ import pandas as pd
 from sklearn.metrics import precision_score, accuracy_score, recall_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 
-train_windows = pd.read_csv('train-pecanstreet.csv', index_col=False)
-test_windows = pd.read_csv('test-pecanstreet.csv', index_col=False)
+train_windows = pd.read_csv('train-0.05-pecanstreet-PAKDD.csv', index_col=False)
+test_windows = pd.read_csv('test-0.05-pecanstreet-PAKDD.csv', index_col=False)
 
-train_result = train_windows['result']
 train_data_without_attacks = train_windows.loc[train_windows['percentage'] == 1]
-train_data_without_attacks = train_data_without_attacks.drop(['result', 'percentage', 'slot', 'duration'], 1)
 
-train_data_cp = train_windows
+train_windows = train_windows[0:len(train_data_without_attacks)]
+train_result = train_windows['result']
+
 train_data = train_windows.drop(['result', 'percentage', 'slot', 'duration'], 1)
-train_data_original = train_data
 test_result = test_windows['result']
 test_data_percentages = test_windows['percentage']
 test_data_slots = test_windows['slot']
@@ -22,11 +21,6 @@ test_data = test_windows.drop(['result', 'percentage', 'slot', 'duration'], 1)
 test_data_original = test_data
 
 sc = StandardScaler()
-# train_data = sc.fit_transform(train_data)
-# test_data = sc.transform(test_data)
-
-output_layer = 'sigmoid'
-# output_layer = 'softmax'
 
 result = pd.DataFrame()
 result['accuracy'] = 0
@@ -65,7 +59,7 @@ for i in range(10):
     precision = precision_score(test_result, y_pred, average='binary')
     accuracy = accuracy_score(test_result, y_pred)
     recall = recall_score(test_result, y_pred, average='binary')
-    f1 = 2*(precision*recall)/(precision + recall)
+    f1 = 2 * (precision*recall) / (precision + recall)
     tn, fp, fn, tp = confusion_matrix(test_result, y_pred).ravel()
     fpr = fp/(fp+tn)
     result.loc[i] = [accuracy, precision, recall, f1, fpr]

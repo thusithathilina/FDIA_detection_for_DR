@@ -23,8 +23,8 @@ if "-dtw" in argv:
     distanceMatrix = 'dtw'
 print('Distance matric = ' + distanceMatrix)
 
-train_windows = pd.read_csv('train-pecanstreet.csv', index_col=False)
-test_windows = pd.read_csv('test-pecanstreet.csv', index_col=False)
+train_windows = pd.read_csv('train-forecasts.csv', index_col=False)
+test_windows = pd.read_csv('test-forecasts.csv', index_col=False)
 
 train_data_without_attacks = train_windows.loc[train_windows['percentage'] == 1]
 train_data_without_attacks = train_data_without_attacks.drop(['result', 'percentage', 'slot', 'duration'], 1)

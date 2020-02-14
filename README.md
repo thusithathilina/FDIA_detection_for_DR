@@ -21,4 +21,6 @@ This repository contains reproducable demo for our CSR and CNN models.
 2. To run the csr model `python csr.py` this will execute with k = 300. 
 You can pass -k argument to change the value of k.
 e.g. `python csr.py -k 100`
+We used euclidean distance for k-means clustering by default. You can change it to dtw by passing `-dtw` parameter
+e.g. `python csr.py -k 100 -dtw`
 3. To run the cnn model `python cnn.py`

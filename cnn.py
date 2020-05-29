@@ -13,6 +13,7 @@ train_windows = train_windows[0:len(train_data_without_attacks)]
 train_result = train_windows['result']
 
 train_data = train_windows.drop(['result', 'percentage', 'slot', 'duration'], 1)
+train_data_original = train_data
 test_result = test_windows['result']
 test_data_percentages = test_windows['percentage']
 test_data_slots = test_windows['slot']

@@ -36,12 +36,11 @@ for i in range(10):
 
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.InputLayer(input_shape=(train_data.shape[1], 1)))
-    model.add(tf.keras.layers.Conv1D(30, 4, activation=tf.nn.selu, padding='same'))
-    model.add(tf.keras.layers.MaxPool1D(2))
-    model.add(tf.keras.layers.Conv1D(20, 2, activation=tf.nn.selu, padding='same'))
-    model.add(tf.keras.layers.MaxPool1D(2))
+    model.add(tf.keras.layers.Conv1D(48, 7, activation=tf.nn.relu, padding='same'))
+    model.add(tf.keras.layers.Conv1D(24, 7, activation=tf.nn.relu, padding='same'))
     model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(128, activation=tf.keras.activations.relu))
+    model.add(tf.keras.layers.Dense(90, activation=tf.keras.activations.relu))
+    model.add(tf.keras.layers.Dropout(0.3))
     model.add(tf.keras.layers.Dense(2, activation=tf.keras.activations.softmax))
     model.summary()
 

@@ -42,7 +42,7 @@ for i in range(10):
     model.add(tf.keras.layers.Dense(90, activation=tf.keras.activations.relu))
     model.add(tf.keras.layers.Dropout(0.3))
     model.add(tf.keras.layers.Dense(2, activation=tf.keras.activations.softmax))
-    model.summary()
+    #model.summary()
 
     model.compile(optimizer=tf.keras.optimizers.Adam(), loss='sparse_categorical_crossentropy')
     early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
@@ -55,9 +55,9 @@ for i in range(10):
     y_pred = np.round(y_pred)
 
     y_pred = [x[1] for x in y_pred]
-    tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
+    tn, fp, fn, tp = confusion_matrix(test_result, y_pred).ravel()
     precision = tp / (tp + fp)
-    accuracy = (tp + tn) / len(df)
+    accuracy = (tp + tn) / len(test_result)
     recall = tp / (tp + tn)
     f1 = 2 * (precision * recall) / (precision + recall)
     fpr = fp / (fp + tn)

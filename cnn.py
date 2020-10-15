@@ -13,6 +13,7 @@ train_windows = train_windows[0:len(train_data_without_attacks)]
 train_result = train_windows['result']
 
 train_data = train_windows.drop(['result', 'percentage', 'slot', 'duration'], 1)
+train_data_original = train_data
 test_result = test_windows['result']
 test_data_percentages = test_windows['percentage']
 test_data_slots = test_windows['slot']
@@ -35,14 +36,13 @@ for i in range(10):
 
     model = tf.keras.models.Sequential()
     model.add(tf.keras.layers.InputLayer(input_shape=(train_data.shape[1], 1)))
-    model.add(tf.keras.layers.Conv1D(30, 4, activation=tf.nn.selu, padding='same'))
-    model.add(tf.keras.layers.MaxPool1D(2))
-    model.add(tf.keras.layers.Conv1D(20, 2, activation=tf.nn.selu, padding='same'))
-    model.add(tf.keras.layers.MaxPool1D(2))
+    model.add(tf.keras.layers.Conv1D(48, 7, activation=tf.nn.relu, padding='same'))
+    model.add(tf.keras.layers.Conv1D(24, 7, activation=tf.nn.relu, padding='same'))
     model.add(tf.keras.layers.Flatten())
-    model.add(tf.keras.layers.Dense(128, activation=tf.keras.activations.relu))
+    model.add(tf.keras.layers.Dense(90, activation=tf.keras.activations.relu))
+    model.add(tf.keras.layers.Dropout(0.3))
     model.add(tf.keras.layers.Dense(2, activation=tf.keras.activations.softmax))
-    model.summary()
+    #model.summary()
 
     model.compile(optimizer=tf.keras.optimizers.Adam(), loss='sparse_categorical_crossentropy')
     early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
@@ -55,9 +55,9 @@ for i in range(10):
     y_pred = np.round(y_pred)
 
     y_pred = [x[1] for x in y_pred]
-    tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
+    tn, fp, fn, tp = confusion_matrix(test_result, y_pred).ravel()
     precision = tp / (tp + fp)
-    accuracy = (tp + tn) / len(df)
+    accuracy = (tp + tn) / len(test_result)
     recall = tp / (tp + tn)
     f1 = 2 * (precision * recall) / (precision + recall)
     fpr = fp / (fp + tn)

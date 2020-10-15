@@ -18,8 +18,8 @@ if "-dtw" in argv:
     distanceMatrix = 'dtw'
 print('Distance matric = ' + distanceMatrix)
 
-train_windows = pd.read_csv('train-forecasts.csv', index_col=False).head(100)
-test_windows = pd.read_csv('test-forecasts.csv', index_col=False).head(50)
+train_windows = pd.read_csv('train-forecasts.csv', index_col=False)
+test_windows = pd.read_csv('test-forecasts.csv', index_col=False)
 
 train_data_without_attacks = train_windows.loc[train_windows['percentage'] == 1]
 train_data_without_attacks = train_data_without_attacks.drop(['result', 'percentage', 'slot', 'duration'], 1)
@@ -53,7 +53,7 @@ for i in range(len(test_data)):
     spectral_residual = log - average_log
     saliency_map = np.abs(ifft(np.exp(spectral_residual + phase * cmath.sqrt(-1))))
 
-    df.ix[i, 'sr_value'] = max(saliency_map)
+    df.loc[i, 'sr_value'] = max(saliency_map)
 
 fpr, tpr, thresholds = roc_curve(df['result'], df['sr_value'])
 threshold = pd.Series(tpr-fpr, index=thresholds, name='tf').idxmax()

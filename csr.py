@@ -62,7 +62,7 @@ df['prediction'] = df['sr_value'].map(lambda x: 1 if x > threshold else 0)
 tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
 precision = tp / (tp + fp)
 accuracy = (tp + tn) / len(df)
-recall = tp / (tp + tn)
+recall = tp / (tp + fn)
 f1 = 2 * (precision * recall) / (precision + recall)
 fpr = fp / (fp + tn)
 

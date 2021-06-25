@@ -6,6 +6,8 @@ from sys import argv
 from scipy.fftpack import fft, ifft
 from sklearn.metrics import confusion_matrix, roc_curve
 from tslearn.clustering import TimeSeriesKMeans
+from util import get_optimal_threshold
+
 
 EPS = 1e-8
 
@@ -79,8 +81,11 @@ for i in range(len(test_data)):
     df.loc[i, 'sr_value'] = max(saliency_map)
 
 fpr, tpr, thresholds = roc_curve(df['result'], df['sr_value'])
-threshold = pd.Series(tpr-fpr, index=thresholds, name='tf').idxmax()
-df['prediction'] = df['sr_value'].map(lambda x: 1 if x > threshold else 0)
+#threshold = pd.Series(tpr-fpr, index=thresholds, name='tf').idxmax()
+threshold = get_optimal_threshold(df['result'], df['sr_value'], steps=100)
+
+
+df['prediction'] = df['sr_value'].map(lambda x: 1 if x < threshold else 0)
 
 tn, fp, fn, tp = confusion_matrix(df['result'], df['prediction']).ravel()
 precision = tp / (tp + fp)
